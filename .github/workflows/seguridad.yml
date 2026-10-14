@@ -43,3 +43,18 @@ jobs:
       - run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: 1
+
+  db:
+    name: Pruebas de RLS (Postgres + pgTAP)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar Postgres 16 con pgTAP
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q postgresql-16-pgtap
+          sudo systemctl start postgresql
+      - name: Ejecutar pruebas
+        run: |
+          cp -r brillo-sur /tmp/brillo-sur && sudo chown -R postgres /tmp/brillo-sur
+          sudo -u postgres bash /tmp/brillo-sur/scripts/test-db.sh

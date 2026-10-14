@@ -9,7 +9,9 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "scan:secrets": "gitleaks git .. --redact --verbose --exit-code 1",
-    "audit:prod": "npm audit --omit=dev --audit-level=high"
+    "audit:prod": "npm audit --omit=dev --audit-level=high",
+    "test:db": "bash scripts/test-db.sh",
+    "test:rls:remote": "node --env-file=.env.local --test scripts/rls-remote.test.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
