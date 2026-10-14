@@ -1,0 +1,45 @@
+name: Seguridad y build
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    name: Escaneo de secretos (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # todo el historial, no solo el último commit
+      - name: Instalar gitleaks
+        run: |
+          curl -sSL -o gl.tgz https://github.com/gitleaks/gitleaks/releases/download/v8.28.0/gitleaks_8.28.0_linux_x64.tar.gz
+          tar xzf gl.tgz gitleaks
+      - name: Escanear historial
+        run: ./gitleaks git . --redact --verbose --exit-code 1
+
+  app:
+    name: Lint, tipos, auditoría y build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: brillo-sur
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: brillo-sur/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - name: Auditoría de dependencias de producción
+        run: npm run audit:prod
+      - run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1

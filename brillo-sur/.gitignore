@@ -1,0 +1,34 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+/build
+
+# misc
+.DS_Store
+*.pem
+*.key
+
+# debug
+npm-debug.log*
+
+# Variables de entorno: NUNCA se suben (punto 2). Solo la plantilla sin valores.
+.env
+.env.*
+!.env.example
+
+# vercel / supabase local
+.vercel
+supabase/.temp/
+supabase/.branches/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

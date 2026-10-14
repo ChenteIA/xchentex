@@ -1,0 +1,8 @@
+# Secretos: nunca se suben (punto 2)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+node_modules/
+.DS_Store
