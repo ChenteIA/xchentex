@@ -6,6 +6,11 @@ import { toCents } from "@/lib/money";
 
 export const PRODUCT_IMAGES_BUCKET = "product-images";
 
+export function productImageUrl(path: string | null): string | null {
+  if (!path) return null;
+  return `${publicEnv().NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${PRODUCT_IMAGES_BUCKET}/${encodeURI(path)}`;
+}
+
 // Lo único que recibe el navegador sobre cada producto (punto 17).
 export type CatalogProduct = {
   id: string; // necesario para armar el pedido
@@ -50,8 +55,6 @@ export async function getCatalog(): Promise<CatalogResult> {
       return { ok: false };
     }
 
-    const storageBase = `${env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${PRODUCT_IMAGES_BUCKET}/`;
-
     const categories = cats.data
       .map((c, i) => ({
         key: `c${i + 1}`,
@@ -65,7 +68,7 @@ export async function getCatalog(): Promise<CatalogResult> {
               unitCents: toCents(p.unit_price),
               packCents: p.pack_price === null ? null : toCents(p.pack_price),
               packLabel: p.pack_label,
-              imageUrl: p.image_path ? storageBase + encodeURI(p.image_path) : null,
+              imageUrl: productImageUrl(p.image_path),
             }),
           ),
       }))

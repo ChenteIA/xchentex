@@ -19,18 +19,30 @@ const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "off" },
 ];
 
-const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
-  : undefined;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL) : undefined;
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  experimental: {
+    // Fotos de hasta 2 MB + datos del formulario (punto 16). El límite real se valida en la acción.
+    serverActions: { bodySizeLimit: "3mb" },
+  },
   images: {
     // Solo se optimizan fotos del bucket público de Supabase.
-    remotePatterns: supabaseHost
-      ? [{ protocol: "https", hostname: supabaseHost, pathname: "/storage/v1/object/public/**" }]
+    // En producción Supabase siempre es https; http solo aparece con Supabase local.
+    remotePatterns: supabaseUrl
+      ? [
+          {
+            protocol: supabaseUrl.protocol === "http:" ? "http" : "https",
+            hostname: supabaseUrl.hostname,
+            port: supabaseUrl.port,
+            pathname: "/storage/v1/object/public/**",
+          },
+        ]
       : [],
+    // Supabase local corre en 127.0.0.1; Next bloquea IPs privadas salvo que se permita.
+    dangerouslyAllowLocalIP: supabaseUrl?.hostname === "127.0.0.1",
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

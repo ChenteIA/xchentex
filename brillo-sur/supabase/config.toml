@@ -14,4 +14,10 @@ enable_signup = false
 minimum_password_length = 10
 
 [auth.email]
-enable_signup = false
+# Debe quedar en true: es el proveedor de correo y contraseña (si se apaga, nadie puede iniciar sesión).
+# El registro público lo cierra "enable_signup = false" de la sección [auth].
+enable_signup = true
+
+# No se usa Realtime en este proyecto.
+[realtime]
+enabled = false

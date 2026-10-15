@@ -9,7 +9,7 @@ import { BUSINESS, ORDER_LIMITS } from "@/lib/business";
 import type { CatalogCategory, CatalogProduct } from "@/lib/catalog";
 import { formatSoles } from "@/lib/money";
 import { priceListMessage, waLink } from "@/lib/whatsapp";
-import { Turnstile, type TurnstileHandle } from "./Turnstile";
+import { Turnstile, type TurnstileHandle } from "@/components/Turnstile";
 import s from "./catalog.module.css";
 
 type Form = "unit" | "pack";
@@ -386,7 +386,7 @@ export function Catalog({ categories, turnstileSiteKey }: { categories: CatalogC
             </p>
           )}
 
-          <Turnstile ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setToken} onError={onTurnstileError} />
+          <Turnstile ref={turnstileRef} siteKey={turnstileSiteKey} action="order" onToken={setToken} onError={onTurnstileError} />
 
           <button type="button" className={s.send} onClick={send} disabled={sending} aria-busy={sending}>
             <WhatsAppIcon />

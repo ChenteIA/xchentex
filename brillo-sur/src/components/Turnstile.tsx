@@ -41,6 +41,7 @@ export type TurnstileHandle = { reset: () => void };
 
 type Props = {
   siteKey: string;
+  action: "order" | "login";
   onToken: (token: string | null) => void;
   onError?: () => void;
 };
@@ -49,7 +50,7 @@ type Props = {
  * Widget de Cloudflare Turnstile (punto 12). Con "interaction-only" solo se
  * muestra cuando Cloudflare necesita que la persona haga clic.
  */
-export const Turnstile = forwardRef<TurnstileHandle, Props>(function Turnstile({ siteKey, onToken, onError }, ref) {
+export const Turnstile = forwardRef<TurnstileHandle, Props>(function Turnstile({ siteKey, action, onToken, onError }, ref) {
   const container = useRef<HTMLDivElement | null>(null);
   const widgetId = useRef<string | null>(null);
   const callbacks = useRef({ onToken, onError });
@@ -75,7 +76,7 @@ export const Turnstile = forwardRef<TurnstileHandle, Props>(function Turnstile({
           appearance: "interaction-only",
           size: "flexible",
           language: "es",
-          action: "order",
+          action,
           callback: (t: string) => callbacks.current.onToken(t),
           "expired-callback": () => callbacks.current.onToken(null),
           "error-callback": () => {
@@ -90,7 +91,7 @@ export const Turnstile = forwardRef<TurnstileHandle, Props>(function Turnstile({
       if (widgetId.current && window.turnstile) window.turnstile.remove(widgetId.current);
       widgetId.current = null;
     };
-  }, [siteKey]);
+  }, [siteKey, action]);
 
   return <div ref={container} />;
 });
