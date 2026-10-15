@@ -15,7 +15,7 @@ trap 'psql -q -d postgres -c "drop database if exists $DB" >/dev/null' EXIT
 
 run() { psql -v ON_ERROR_STOP=1 -q -X -d "$DB" "$@"; }
 
-run -f supabase/tests/_shim_supabase.sql >/dev/null
+run -f scripts/shim-supabase.sql >/dev/null
 for f in supabase/migrations/*.sql; do run -f "$f" >/dev/null; done
 run -f supabase/seed.sql >/dev/null
 
