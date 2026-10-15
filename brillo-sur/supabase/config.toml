@@ -1,0 +1,23 @@
+# Configuración para el CLI de Supabase (desarrollo local con `supabase start`).
+# En el proyecto en la nube, estos mismos ajustes se hacen en el panel de Supabase.
+project_id = "brillo-sur"
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+site_url = "http://localhost:3000"
+# Registro público desactivado: solo el owner crea usuarios (punto 7).
+enable_signup = false
+# Mínimo 10 caracteres (punto 10).
+minimum_password_length = 10
+
+[auth.email]
+# Debe quedar en true: es el proveedor de correo y contraseña (si se apaga, nadie puede iniciar sesión).
+# El registro público lo cierra "enable_signup = false" de la sección [auth].
+enable_signup = true
+
+# No se usa Realtime en este proyecto.
+[realtime]
+enabled = false
