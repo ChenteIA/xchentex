@@ -1,0 +1,488 @@
+/* ---------- Pestañas ---------- */
+.tabs {
+  display: flex;
+  gap: 4px 24px;
+  border-bottom: 1px solid var(--border-soft);
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* En celular las pestañas se deslizan en lugar de apilarse. */
+  margin: 0 calc(var(--gutter) * -1);
+  padding: 0 var(--gutter);
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 721px) {
+  .tabs {
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.tab,
+.tabActive {
+  flex: 0 0 auto;
+  min-height: 48px;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tabActive {
+  border-bottom-color: var(--ember);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+/* ---------- Distribución ---------- */
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.grid {
+  flex: 999 1 560px;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr));
+  gap: 16px;
+}
+
+/* ---------- Tarjeta de producto ---------- */
+.card {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.photo {
+  position: relative;
+  height: 140px;
+  background: var(--bg-alt);
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 12px;
+}
+
+.img {
+  object-fit: contain;
+  padding: 8px;
+}
+
+.inCart {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--topbar);
+  border-radius: var(--radius-tag);
+  padding: 3px 8px;
+}
+
+.cardBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-grow: 1;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.prices {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.priceCol,
+.priceColEnd {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.priceColEnd {
+  align-items: flex-end;
+}
+
+.priceLabel {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.unitPrice {
+  font-weight: 600;
+}
+
+.packPrice {
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.addRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.btnOutline,
+.btnDark {
+  min-height: var(--tap);
+  border-radius: var(--radius);
+  font-size: 14px;
+}
+
+.btnOutline {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 500;
+}
+
+.btnOutline:hover {
+  border-color: var(--text);
+}
+
+.btnDark {
+  border: 0;
+  background: #000000;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.btnDark:hover {
+  background: var(--topbar);
+}
+
+/* ---------- Carrito ---------- */
+.cart {
+  flex: 1 1 320px;
+  min-width: 0;
+  background: var(--bg-alt);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-margin-top: 88px;
+}
+
+@media (min-width: 1000px) {
+  .cart {
+    position: sticky;
+    top: 88px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart {
+    padding: 16px;
+  }
+}
+
+.rowBetween {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cartTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-tag);
+  padding: 2px 8px;
+}
+
+.emptyText {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 15px;
+}
+
+.lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.line {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lineText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.35;
+  min-width: 0;
+}
+
+.lineName {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.lineDetail {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.stepBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 18px;
+}
+
+.stepBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.qty {
+  min-width: 26px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  padding: 0;
+}
+
+.input {
+  min-height: 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0 14px;
+  color: var(--text);
+  background: var(--bg);
+  /* 16px evita el zoom automático en iPhone */
+  font-size: 16px;
+}
+
+.help {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.help a {
+  color: var(--text-2);
+}
+
+.delivery {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.seg,
+.segActive {
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+}
+
+.segActive {
+  border: 2px solid var(--text);
+  font-weight: 600;
+}
+
+.seg:has(input:focus-visible),
+.segActive:has(input:focus-visible) {
+  outline: 2px solid var(--ember-deep);
+  outline-offset: 2px;
+}
+
+.totalRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.muted {
+  color: var(--text-2);
+}
+
+.total {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.note,
+.noteStrong,
+.error {
+  margin: 0;
+  font-size: 14px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+
+.noteStrong {
+  font-weight: 600;
+}
+
+.error {
+  border: 1px solid var(--ember-deep);
+  color: #8a2f00;
+  font-weight: 500;
+}
+
+.send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--ember-deep);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.send:hover {
+  background: #b03d00;
+}
+
+.clear {
+  min-height: var(--tap);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: underline;
+}
+
+/* ---------- Elementos fijos ---------- */
+.fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 6;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: var(--ember-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobileBar {
+  display: none;
+}
+
+@media (max-width: 999px) {
+  .fabHideMobile {
+    display: none;
+  }
+
+  .mobileBar {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 6;
+    min-height: 56px;
+    padding: 0 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: var(--radius);
+    background: var(--topbar);
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .mobileBar:hover {
+    color: #ffffff;
+  }
+}
