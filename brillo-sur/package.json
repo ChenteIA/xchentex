@@ -11,7 +11,8 @@
     "scan:secrets": "gitleaks git .. --redact --verbose --exit-code 1",
     "audit:prod": "npm audit --omit=dev --audit-level=high",
     "test:db": "bash scripts/test-db.sh",
-    "test:rls:remote": "node --env-file=.env.local --test scripts/rls-remote.test.mjs"
+    "test:rls:remote": "node --env-file=.env.local --test scripts/rls-remote.test.mjs",
+    "test": "node --test --experimental-strip-types tests/*.test.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

@@ -1,4 +1,4 @@
-import { formatSoles } from "@/lib/money";
+import { formatSoles } from "./money.ts";
 
 /**
  * Enlaces de WhatsApp. Todo el texto (incluido lo que escribe el cliente)

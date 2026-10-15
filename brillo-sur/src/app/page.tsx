@@ -45,7 +45,10 @@ export default async function Home() {
               </p>
             </div>
             {catalog.ok && catalog.categories.length > 0 ? (
-              <Catalog categories={catalog.categories} />
+              <Catalog
+                categories={catalog.categories}
+                turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? ""}
+              />
             ) : (
               <p className={s.unavailable} role="status">
                 No pudimos cargar el catálogo en este momento. Escríbenos por WhatsApp y te enviamos la lista de

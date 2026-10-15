@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { WhatsAppIcon } from "@/components/icons";
 import { useOrder } from "@/components/OrderProvider";
 import { BUSINESS, ORDER_LIMITS } from "@/lib/business";
 import type { CatalogCategory, CatalogProduct } from "@/lib/catalog";
 import { formatSoles } from "@/lib/money";
-import { orderMessage, priceListMessage, waLink } from "@/lib/whatsapp";
+import { priceListMessage, waLink } from "@/lib/whatsapp";
+import { Turnstile, type TurnstileHandle } from "./Turnstile";
 import s from "./catalog.module.css";
 
 type Form = "unit" | "pack";
@@ -22,7 +23,7 @@ function packWord(label: string): string {
   return label.split(" ")[0] || "Caja";
 }
 
-export function Catalog({ categories }: { categories: CatalogCategory[] }) {
+export function Catalog({ categories, turnstileSiteKey }: { categories: CatalogCategory[]; turnstileSiteKey: string }) {
   const { businessName, setBusinessName, waNumber } = useOrder();
   const [activeKey, setActiveKey] = useState(categories[0]?.key ?? "");
   const [cart, setCart] = useState<Cart>({});
@@ -32,6 +33,15 @@ export function Catalog({ categories }: { categories: CatalogCategory[] }) {
   const [triedSend, setTriedSend] = useState(false);
   const [cartInView, setCartInView] = useState(false);
   const cartRef = useRef<HTMLElement | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [sent, setSent] = useState<{ orderRef: string; whatsappUrl: string } | null>(null);
+  const turnstileRef = useRef<TurnstileHandle>(null);
+  const onTurnstileError = useCallback(
+    () => setServerError("No pudimos cargar la verificación anti-bots. Recarga la página."),
+    [],
+  );
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const uid = useId();
 
@@ -108,24 +118,49 @@ export function Catalog({ categories }: { categories: CatalogCategory[] }) {
   }
 
   // ---- Envío ----
-  function send() {
+  // El navegador solo envía producto, forma y cantidad. El servidor valida,
+  // busca los precios reales, guarda el pedido y devuelve el enlace de WhatsApp.
+  async function send() {
     setTriedSend(true);
-    if (validationError()) return;
-
-    // Fase 3: el mensaje se arma en el navegador. En la Fase 4 el servidor
-    // valida, recalcula con precios reales, guarda el pedido y devuelve el enlace.
-    const text = orderMessage({
-      businessName,
-      delivery,
-      totalCents,
-      lines: lines.map((l) => ({
-        quantity: l.qty,
-        formLabel: l.form === "pack" ? (l.product.packLabel ?? "").toLowerCase() : "und.",
-        name: l.product.name,
-        subtotalCents: l.subtotal,
-      })),
-    });
-    window.location.assign(waLink(waNumber, text));
+    setServerError(null);
+    if (validationError() || sending) return;
+    if (!token) {
+      setServerError("Estamos verificando que no eres un robot. Intenta de nuevo en unos segundos.");
+      return;
+    }
+    setSending(true);
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName,
+          phone,
+          delivery,
+          turnstileToken: token,
+          items: lines.map((l) => ({ productId: l.product.id, form: l.form, quantity: l.qty })),
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        orderRef?: string;
+        whatsappUrl?: string;
+      };
+      if (!res.ok || !data.whatsappUrl || !data.orderRef) {
+        setServerError(data.error ?? "No pudimos registrar tu pedido. Intenta de nuevo.");
+        return;
+      }
+      setSent({ orderRef: data.orderRef, whatsappUrl: data.whatsappUrl });
+      setCart({});
+      setTriedSend(false);
+      window.location.assign(data.whatsappUrl);
+    } catch {
+      setServerError("Sin conexión. Revisa tu internet e intenta de nuevo.");
+    } finally {
+      setSending(false);
+      // Cada token de Turnstile sirve una sola vez.
+      turnstileRef.current?.reset();
+    }
   }
 
   const panelId = `${uid}-panel`;
@@ -335,15 +370,27 @@ export function Catalog({ categories }: { categories: CatalogCategory[] }) {
             <p className={s.noteStrong}>Tu pedido tiene reparto gratis en Mala.</p>
           )}
 
-          {error && (
+          {(error ?? serverError) && (
             <p className={s.error} role="alert">
-              {error}
+              {error ?? serverError}
             </p>
           )}
 
-          <button type="button" className={s.send} onClick={send}>
+          {sent && isEmpty && (
+            <p className={s.noteStrong} role="status">
+              Pedido N.º {sent.orderRef} registrado.{" "}
+              <a href={sent.whatsappUrl} className={s.inlineLink}>
+                Abrir WhatsApp
+              </a>{" "}
+              si no se abrió solo.
+            </p>
+          )}
+
+          <Turnstile ref={turnstileRef} siteKey={turnstileSiteKey} onToken={setToken} onError={onTurnstileError} />
+
+          <button type="button" className={s.send} onClick={send} disabled={sending} aria-busy={sending}>
             <WhatsAppIcon />
-            Enviar pedido por WhatsApp
+            {sending ? "Enviando pedido…" : "Enviar pedido por WhatsApp"}
           </button>
 
           {!isEmpty && (
